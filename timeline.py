@@ -14,5 +14,6 @@ __metaclass__ = PoolMeta
 
 
 class Timeline(ModelSQL, ModelView):
+    'Timeline'
     __name__ = 'project.timeline'
     dummy = fields.Numeric('dummy')
