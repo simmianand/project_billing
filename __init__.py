@@ -15,7 +15,7 @@ from .timeline import *
 def register():
     Pool.register(
         Resource,
-        TopProject,
+        Project,
         Timeline,
         module='projectbilling', type_='model',
     )

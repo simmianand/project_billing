@@ -1,3 +1,27 @@
 <?xml version="1.0"?>
 <tryton>
+    <data>
+        <record model="ir.ui.view" id="work_view_billing_form">
+            <field name="model">project.work</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="project.work_view_form"/>
+            <field name="arch" type="xml">
+                <![CDATA[
+                <data>
+                    <xpath
+                            expr="/form/field[@name=&quot;party_address&quot;]"
+                            position="after">
+                        <newline /> 
+                        <label name="hr_rate"/>
+                        <field name="hr_rate"/>
+                        <label name="currency"/>
+                        <field name="currency"/>
+                        <label name="billable"/>
+                        <field name="billable"/>
+                    </xpath>
+                </data>
+                ]]>
+            </field>
+        </record>
+    </data>
 </tryton>
