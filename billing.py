@@ -19,7 +19,21 @@ __metaclass__ = PoolMeta
 class Resource(ModelSQL, ModelView):
     'Resource'
     __name__ = 'project.resource'
-    dummy = fields.Numeric('dummy')
+    project = fields.Many2One('project.work', 'Project')
+    employee = fields.Many2One('company.employee', 'Employee', required=True)
+    product = fields.Many2One(
+        'product.product', 'Product',
+        domain=[('type', '=', 'service')],
+    )
+
+    @classmethod
+    def __setup__(cls):
+        super(Resource, cls).__setup__()
+        cls._sql_constraints += [
+            ('Unique_Resource', 'UNIQUE(employee)',
+                'Some employees are remarked as resource for this project'),
+        ]
+
 
 class Project(ModelSQL, ModelView):
     'Project'
@@ -30,14 +44,17 @@ class Project(ModelSQL, ModelView):
             ('non billable', 'Non Billable'),
         ],
         'Billable', select=True, states={
-            'invisible': Or(Eval('type') != 'project',Bool(Eval('parent'))),
-            'required': Eval('type') == 'project',
-    }, depends=['type'])
-    currency = fields.Many2One('currency.currency', 'currency', states={
-        'invisible': Or(Eval('type') != 'project',Bool(Eval('parent'))),
-        'required': Eval('type') == 'project',
-    }, depends=['type'])
+            'invisible': Or(Eval('type') != 'project', Bool(Eval('parent'))),
+            'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
+        },
+        depends=['type', 'parent']
+    )
+    currency = fields.Many2One('currency.currency', 'Currency', states={
+        'invisible': Or(Eval('type') != 'project', Bool(Eval('parent'))),
+        'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
+    }, depends=['type', 'parent'])
     hr_rate = fields.Numeric('Hourly Rate', states={
-        'invisible': Or(Eval('type') != 'project',Bool(Eval('parent'))),
-        'required': Eval('type') == 'project',
-    }, depends=['type'])
+        'invisible': Or(Eval('type') != 'project', Bool(Eval('parent'))),
+        'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
+    }, depends=['type', 'parent'])
+    resources = fields.One2Many('project.resource', 'project', 'Resources')
