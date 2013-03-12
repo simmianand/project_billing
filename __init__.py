@@ -9,10 +9,13 @@
 """
 from trytond.pool import Pool
 
-from .billing import *
-from .timeline import *
+from .billing import Resource, Project
+from .timeline import Timeline
+
 
 def register():
+    """This function will register trytond module project_billing
+    """
     Pool.register(
         Resource,
         Project,

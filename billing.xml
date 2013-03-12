@@ -19,7 +19,44 @@
                         <label name="billable"/>
                         <field name="billable"/>
                     </xpath>
+                    <xpath
+                            expr="/form/notebook/page[@id='timesheet_lines']" position="after">
+                        <page string="Resources" id="resources_list">
+                            <field name="resources" colspan="4"/>
+                        </page>
+                    </xpath>
                 </data>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="project_resource_view_tree">
+            <field name="model">project.resource</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <tree string="Project Resource">
+                        <field name="project"/>
+                        <field name="employee"/>
+                        <field name="product"/>
+                    </tree>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="project_resource_view_form">
+            <field name="model">project.resource</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <form string="Project Resource">
+                        <label name="project"/>
+                        <field name="project"/>
+                        <newline/>
+                        <label name="employee"/>
+                        <field name="employee"/>
+                        <newline/>
+                        <label name="product"/>
+                        <field name="product"/>
+                    </form>
                 ]]>
             </field>
         </record>
