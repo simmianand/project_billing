@@ -5,14 +5,17 @@
     :copyright: (c) 2013 by Openlabs Technologies & Consulting (P) Limited
     :license: BSD, see LICENSE for more details.
 """
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.model import fields
 from trytond.pool import PoolMeta
-
 
 __all__ = ['Timeline']
 __metaclass__ = PoolMeta
 
 
-class Timeline(ModelSQL, ModelView):
-    __name__ = 'project.timeline'
-    dummy = fields.Numeric('dummy')
+class Timeline:
+    __name__ = 'timesheet.line'
+
+    billing_type = fields.Selection([
+        ('billable', 'Billable'),
+        ('non billable', 'Non Billable'),
+    ], 'Billing Type', required=True, select=True)
