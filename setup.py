@@ -49,6 +49,7 @@ setup(name='trytond_projectbilling',
     package_dir={'trytond.modules.projectbilling': '.'},
     packages=[
         'trytond.modules.projectbilling',
+        'trytond.modules.projectbilling.tests',
         ],
     package_data={
         'trytond.modules.projectbilling': info.get('xml', []) \
@@ -74,6 +75,8 @@ setup(name='trytond_projectbilling',
     [trytond.modules]
     projectbilling = trytond.modules.projectbilling
     """,
+    test_suite='tests',
+    test_loader='trytond.test_loader:Loader',
     )
 
 # pylint: enable-msg=C0103
