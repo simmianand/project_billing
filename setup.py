@@ -49,7 +49,7 @@ setup(name='trytond_projectbilling',
     package_dir={'trytond.modules.projectbilling': '.'},
     packages=[
         'trytond.modules.projectbilling',
-        'trytond.modules.project.tests',
+        'trytond.modules.projectbilling.tests',
         ],
     package_data={
         'trytond.modules.projectbilling': info.get('xml', []) \
