@@ -9,7 +9,7 @@
 """
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import PoolMeta
-from trytond.pyson import Eval, Bool, And, Or
+from trytond.pyson import Eval, Bool, And, Or, Not
 
 
 __all__ = ['Resource', 'Project']
@@ -58,3 +58,15 @@ class Project(ModelSQL, ModelView):
         'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
     }, depends=['type', 'parent'])
     resources = fields.One2Many('project.resource', 'project', 'Resources')
+    timesheet_lines = fields.One2Many('timesheet.line', 'work',
+        'Timesheet Lines',
+        depends=['timesheet_available', 'active'],
+        states={
+            'invisible': Not(Bool(Eval('timesheet_available'))),
+            'readonly': Not(Bool(Eval('active'))),
+            }, context={'billable': Eval('billable')}
+        )
+
+    @staticmethod
+    def default_billable():
+        return 'billable'
