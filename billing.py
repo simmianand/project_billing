@@ -9,7 +9,7 @@
 """
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import PoolMeta, Pool
-from trytond.pyson import Eval, Bool, And, Or
+from trytond.pyson import Eval, Bool, And, Or, Not
 
 __all__ = ['Resource', 'Project']
 __metaclass__ = PoolMeta
@@ -37,6 +37,7 @@ class Resource(ModelSQL, ModelView):
 class Party(ModelSQL, ModelView):
     'Party'
     __name__ = 'party.party'
+
     @classmethod
     def __setup__(cls):
         super(Party, cls).__setup__()
@@ -66,6 +67,18 @@ class Project(ModelSQL, ModelView):
         'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
     }, depends=['type', 'parent'])
     resources = fields.One2Many('project.resource', 'project', 'Resources')
+    timesheet_lines = fields.One2Many('timesheet.line', 'work',
+        'Timesheet Lines',
+        depends=['timesheet_available', 'active'],
+        states={
+            'invisible': Not(Bool(Eval('timesheet_available'))),
+            'readonly': Not(Bool(Eval('active'))),
+        }, context={'billable': Eval('billable')}
+    )
+
+    @staticmethod
+    def default_billable():
+        return 'billable'
 
     @classmethod
     def __setup__(cls):
@@ -79,9 +92,9 @@ class Project(ModelSQL, ModelView):
     @classmethod
     @ModelView.button
     def createinvoice(cls, projects):
-        invoice  = Pool().get('account.invoice')
+        invoice = Pool().get('account.invoice')
         for project in projects:
-            current_invoice = invoice.create({
+            invoice.create({
                 'payment_term': project.party.customer_payment_term.id,
                 'party': project.party.id,
                 'account': project.company.account_receivable.id,

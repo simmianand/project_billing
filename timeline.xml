@@ -1,3 +1,40 @@
 <?xml version="1.0"?>
+<!-- This file contain the view of timeline sheet in project model -->
 <tryton>
+    <data>
+        <record model="ir.ui.view" id="timeline_billing_view_tree">
+            <field name="model">timesheet.line</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="timesheet.line_view_tree"/>
+            <field name="arch" type="xml">
+                <![CDATA[
+                <data>
+                    <xpath
+                        expr="/tree/field[@name=&quot;description&quot;]"
+                        position="after">
+                        <field name="billing_type"/>
+                    </xpath>
+                </data>
+                ]]>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="timeline_billing_view_form">
+            <field name="model">timesheet.line</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="timesheet.line_view_form"/>
+            <field name="arch" type="xml">
+                <![CDATA[
+                <data>
+                    <xpath
+                        expr="/form/field[@name=&quot;description&quot;]"
+                        position="after">
+                        <label name="billing_type"/>
+                        <field name="billing_type"/>
+                    </xpath>
+                </data>
+                ]]>
+            </field>
+        </record>
+    </data>
 </tryton>
