@@ -18,9 +18,12 @@
                         <field name="currency"/>
                         <label name="billable"/>
                         <field name="billable"/>
+                        <button name="createinvoice" string="_Create Invoice" 
+                          icon="tryton-go-next" colspan="2" />
                     </xpath>
                     <xpath
-                            expr="/form/notebook/page[@id='timesheet_lines']" position="after">
+                            expr="/form/notebook/page[@id='timesheet_lines']" 
+                            position="after">
                         <page string="Resources" id="resources_list">
                             <field name="resources" colspan="4"/>
                         </page>

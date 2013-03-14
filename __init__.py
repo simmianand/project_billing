@@ -9,7 +9,7 @@
 """
 from trytond.pool import Pool
 
-from .billing import Resource, Project
+from .billing import Resource, Project, Party
 from .timeline import Timeline
 
 
@@ -20,5 +20,6 @@ def register():
         Resource,
         Project,
         Timeline,
+        Party,
         module='projectbilling', type_='model',
     )
