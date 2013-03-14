@@ -10,6 +10,7 @@
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import PoolMeta
 from trytond.pyson import Eval, Bool, And, Or, Not
+from trytond.transaction import Transaction
 
 
 __all__ = ['Resource', 'Project']
@@ -64,9 +65,13 @@ class Project(ModelSQL, ModelView):
         states={
             'invisible': Not(Bool(Eval('timesheet_available'))),
             'readonly': Not(Bool(Eval('active'))),
-            }, context={'billable': Eval('billable')}
+            }, context={'billable': Eval('billable')},
         )
+    children = fields.One2Many('project.work', 'parent', 'Children',
+        context={'billable': Eval('billable')}, depends=['billable'],
+    )
 
     @staticmethod
     def default_billable():
-        return 'billable'
+        if Transaction().context.get('billable'):
+            return Transaction().context.get('billable')

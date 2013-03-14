@@ -21,14 +21,10 @@ class Timeline:
         ('billable', 'Billable'),
         ('non billable', 'Non Billable'),
     ], 'Billing Type', required=True, select=True,
-    states={
-        'readonly': Not(Eval('billing_type')== 'billable')
+    states={'readonly': Not(Eval('billing_type') == 'billable')
     })
 
     @staticmethod
     def default_billing_type():
-        return Transaction().context.get('billable')
-
-class Task:
-    __name__= 'project.work'
+            return Transaction().context.get('billable')
 
