@@ -83,6 +83,14 @@ class Project(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(Project, cls).__setup__()
+        cls.party.states={
+        'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
+        }
+        #cls.party.depends=['type', 'parent']
+        #cls.invoice_address.states={
+        #'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
+        #}
+        #cls.invoice_address.depends=['type', 'parent']
         cls._buttons.update({
             'createinvoice': {
                 'invisible': Eval(1),
@@ -93,13 +101,28 @@ class Project(ModelSQL, ModelView):
     @ModelView.button
     def createinvoice(cls, projects):
         invoice = Pool().get('account.invoice')
+        products = Pool().get('product.product')
+        #print products.search_rec_name(name='Openlabs').name
         for project in projects:
-            invoice.create({
+            details = {
                 'payment_term': project.party.customer_payment_term.id,
                 'party': project.party.id,
                 'account': project.company.account_receivable.id,
                 'invoice_address': cls._get_invoice_address(project.party),
-            })
+            }
+            details['description'] = project.name
+            lines = [
+                        ('create', {
+                                'line': 'line',
+                                'quantity': 3,
+                                'unit': 30,
+                                'divisor': 4,
+                                'percentage': 25,
+                                'days': 30,
+                                })
+                    ]
+            details['lines'] = lines
+            invoice.create(details)
         return True
 
     @classmethod
