@@ -61,7 +61,7 @@ class Project(ModelSQL, ModelView):
     resources = fields.One2Many('project.resource', 'project', 'Resources')
     timesheet_lines = fields.One2Many('timesheet.line', 'work',
         'Timesheet Lines',
-        depends=['timesheet_available', 'active'],
+        depends=['timesheet_available', 'active', 'billable'],
         states={
             'invisible': Not(Bool(Eval('timesheet_available'))),
             'readonly': Not(Bool(Eval('active'))),
