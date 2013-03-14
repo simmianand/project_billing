@@ -34,7 +34,6 @@ class Resource(ModelSQL, ModelView):
                 'Some employees are remarked as resource for this project'),
         ]
 
-
 class Party(ModelSQL, ModelView):
     'Party'
     __name__ = 'party.party'
@@ -43,7 +42,6 @@ class Party(ModelSQL, ModelView):
     def __setup__(cls):
         super(Party, cls).__setup__()
         cls.customer_payment_term.required = True
-
 
 class Project(ModelSQL, ModelView):
     'Project'
@@ -68,20 +66,23 @@ class Project(ModelSQL, ModelView):
         'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
     }, depends=['type', 'parent'])
     resources = fields.One2Many('project.resource', 'project', 'Resources')
-    timesheet_lines = fields.One2Many('timesheet.line', 'work',
-        'Timesheet Lines',
+    timesheet_lines = fields.One2Many(
+        'timesheet.line', 'work', 'Timesheet Lines',
         depends=['timesheet_available', 'active', 'billable'],
         states={
             'invisible': Not(Bool(Eval('timesheet_available'))),
             'readonly': Not(Bool(Eval('active'))),
-            }, context={'billable': Eval('billable')},
-        )
-    children = fields.One2Many('project.work', 'parent', 'Children',
+        }, context={'billable': Eval('billable')},
+    )
+    children = fields.One2Many(
+        'project.work', 'parent', 'Children',
         context={'billable': Eval('billable')}, depends=['billable'],
     )
 
     @staticmethod
     def default_billable():
+        '''Takes default selected value in task's timesheet
+        '''
         if Transaction().context.get('billable'):
             return Transaction().context.get('billable')
 
