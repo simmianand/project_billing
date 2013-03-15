@@ -12,7 +12,7 @@ from trytond.pool import PoolMeta, Pool
 from trytond.pyson import Eval, Bool, And, Or, Not
 from trytond.transaction import Transaction
 
-__all__ = ['Resource', 'Project']
+__all__ = ['Resource', 'Project', 'Party']
 __metaclass__ = PoolMeta
 
 
@@ -34,6 +34,7 @@ class Resource(ModelSQL, ModelView):
                 'Some employees are remarked as resource for this project'),
         ]
 
+
 class Party(ModelSQL, ModelView):
     'Party'
     __name__ = 'party.party'
@@ -42,6 +43,7 @@ class Party(ModelSQL, ModelView):
     def __setup__(cls):
         super(Party, cls).__setup__()
         cls.customer_payment_term.required = True
+
 
 class Project(ModelSQL, ModelView):
     'Project'

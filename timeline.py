@@ -8,7 +8,7 @@
 from trytond.model import fields
 from trytond.pool import PoolMeta
 from trytond.transaction import Transaction
-from trytond.pyson import Eval, Not
+from trytond.pyson import Eval, Not, Bool, And
 
 
 __all__ = ['Timeline']
@@ -22,9 +22,10 @@ class Timeline:
     billing_type = fields.Selection([
         ('billable', 'Billable'),
         ('non billable', 'Non Billable'),
-    ], 'Billing Type', required=True, select=True,
-        states={'readonly': Not(Eval('billing_type') == 'billable')}
-    )
+    ], 'Billing Type', select=True, required=True, states={
+        'readonly': And(Not(Eval('billing_type') == 'billable'),
+        Bool(Eval('billing_type'))),
+    })
 
     @staticmethod
     def default_billing_type():
