@@ -12,14 +12,8 @@
                             expr="/form/field[@name=&quot;party_address&quot;]"
                             position="after">
                         <newline /> 
-                        <label name="hr_rate"/>
-                        <field name="hr_rate"/>
-                        <label name="currency"/>
-                        <field name="currency"/>
                         <label name="billable"/>
                         <field name="billable"/>
-                        <button name="createinvoice" string="_Create Invoice" 
-                          icon="tryton-go-next" colspan="2" />
                     </xpath>
                     <xpath
                             expr="/form/notebook/page[@id='timesheet_lines']" 
@@ -32,6 +26,37 @@
                 ]]>
             </field>
         </record>
+        <record model="ir.ui.view" id="project_prices_form">
+            <field name="model">project.prices</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <form string="Project Prices">
+                        <label name="project"/>
+                        <field name="project"/>
+                        <newline/>
+                        <label name="service"/>
+                        <field name="service"/>
+                        <newline/>
+                        <label name="rate"/>
+                        <field name="rate"/>
+                    </form>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="project_prices_tree">
+            <field name="model">project.prices</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <tree string="Project Prices">
+                        <field name="project"/>
+                        <field name="service"/>
+                        <field name="rate"/>
+                    </tree>
+                ]]>
+            </field>
+        </record>
         <record model="ir.ui.view" id="project_resource_view_tree">
             <field name="model">project.resource</field>
             <field name="type">tree</field>
@@ -40,7 +65,7 @@
                     <tree string="Project Resource">
                         <field name="project"/>
                         <field name="employee"/>
-                        <field name="product"/>
+                        <field name="service"/>
                     </tree>
                 ]]>
             </field>
@@ -57,11 +82,26 @@
                         <label name="employee"/>
                         <field name="employee"/>
                         <newline/>
-                        <label name="product"/>
-                        <field name="product"/>
+                        <label name="service"/>
+                        <field name="service"/>
                     </form>
                 ]]>
             </field>
         </record>
+        <record model="ir.action.act_window" id="act_project_prices_form">
+            <field name="name">Prices</field>
+            <field name="res_model">project.prices</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_project_prices_form_view1">
+            <field name="sequence" eval="20" />
+            <field name="view" ref="project_prices_form" />
+            <field name="act_window" ref="act_project_prices_form" />
+        </record>
+        <record model="ir.action.act_window.view" id="act_project_prices_form_view2">
+            <field name="sequence" eval="10" />
+            <field name="view" ref="project_prices_tree" />
+            <field name="act_window" ref="act_project_prices_form" />
+        </record>
+        <menuitem action="act_project_prices_form" id="prices_form" sequence="2"/>
     </data>
 </tryton>
