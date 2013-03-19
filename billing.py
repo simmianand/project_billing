@@ -9,11 +9,22 @@
 """
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import PoolMeta, Pool
-from trytond.pyson import Eval, Bool, And, Or, Not
 from trytond.transaction import Transaction
+from trytond.pyson import Eval, Bool, And, Or
 
 __all__ = ['Resource', 'Project', 'Party']
 __metaclass__ = PoolMeta
+
+
+class Prices(ModelSQL, ModelView):
+    'Prices'
+    __name__ = 'project.prices'
+    project = fields.Many2One('project.work', 'Project')
+    service = fields.Many2One(
+        'product.product', 'Product',
+        domain=[('type', '=', 'service')],
+    )
+    rate = fields.Numeric('Rate')
 
 
 class Resource(ModelSQL, ModelView):
@@ -21,10 +32,7 @@ class Resource(ModelSQL, ModelView):
     __name__ = 'project.resource'
     project = fields.Many2One('project.work', 'Project')
     employee = fields.Many2One('company.employee', 'Employee', required=True)
-    product = fields.Many2One(
-        'product.product', 'Product',
-        domain=[('type', '=', 'service')],
-    )
+    service = fields.Many2One('project.prices', 'Service')
 
     @classmethod
     def __setup__(cls):
@@ -33,16 +41,6 @@ class Resource(ModelSQL, ModelView):
             ('Unique_Resource', 'UNIQUE(employee)',
                 'Some employees are remarked as resource for this project'),
         ]
-
-
-class Party(ModelSQL, ModelView):
-    'Party'
-    __name__ = 'party.party'
-
-    @classmethod
-    def __setup__(cls):
-        super(Party, cls).__setup__()
-        cls.customer_payment_term.required = True
 
 
 class Project(ModelSQL, ModelView):
@@ -59,27 +57,17 @@ class Project(ModelSQL, ModelView):
         },
         depends=['type', 'parent']
     )
-    currency = fields.Many2One('currency.currency', 'Currency', states={
-        'invisible': Or(Eval('type') != 'project', Bool(Eval('parent'))),
-        'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
-    }, depends=['type', 'parent'])
-    hr_rate = fields.Numeric('Hourly Rate', states={
-        'invisible': Or(Eval('type') != 'project', Bool(Eval('parent'))),
-        'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
-    }, depends=['type', 'parent'])
+    currency = fields.Many2One('currency.currency', 'Currency', required=False)
+    hr_rate = fields.Numeric('Hourly Rate', required = False)
     resources = fields.One2Many('project.resource', 'project', 'Resources')
-    timesheet_lines = fields.One2Many(
-        'timesheet.line', 'work', 'Timesheet Lines',
-        depends=['timesheet_available', 'active', 'billable'],
-        states={
-            'invisible': Not(Bool(Eval('timesheet_available'))),
-            'readonly': Not(Bool(Eval('active'))),
-        }, context={'billable': Eval('billable')},
-    )
-    children = fields.One2Many(
-        'project.work', 'parent', 'Children',
-        context={'billable': Eval('billable')}, depends=['billable'],
-    )
+    #timesheet_lines = fields.One2Many('timesheet.line', 'work',
+        #'Timesheet Lines',
+        #depends=['timesheet_available', 'active'],
+        #states={
+            #'invisible': Not(Bool(Eval('timesheet_available'))),
+            #'readonly': Not(Bool(Eval('active'))),
+        #}, context={'billable': Eval('billable')}
+    #)
 
     @staticmethod
     def default_billable():
@@ -87,23 +75,6 @@ class Project(ModelSQL, ModelView):
         '''
         if Transaction().context.get('billable'):
             return Transaction().context.get('billable')
-
-    @classmethod
-    def __setup__(cls):
-        super(Project, cls).__setup__()
-        cls.party.states={
-        'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
-        }
-        #cls.party.depends=['type', 'parent']
-        #cls.invoice_address.states={
-        #'required': And(Eval('type') == 'project', ~Bool(Eval('parent'))),
-        #}
-        #cls.invoice_address.depends=['type', 'parent']
-        cls._buttons.update({
-            'createinvoice': {
-                'invisible': Eval(1),
-            }
-        })
 
     @classmethod
     @ModelView.button
