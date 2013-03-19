@@ -35,6 +35,8 @@ class Timeline(ModelSQL, ModelView):
 
 
 class Timesheet(ModelSQL, ModelView):
+    '''This class includes marking time on timesheets
+    '''
     __name__ = 'project.work'
     timesheet_lines = fields.One2Many(
         'timesheet.line', 'work', 'Timesheet Lines',
