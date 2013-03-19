@@ -9,7 +9,6 @@
 """
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import PoolMeta, Pool
-from trytond.transaction import Transaction
 from trytond.pyson import Eval, Bool, And, Or
 
 __all__ = ['Resource', 'Project', 'Party']
@@ -71,10 +70,7 @@ class Project(ModelSQL, ModelView):
 
     @staticmethod
     def default_billable():
-        '''Takes default selected value in task's timesheet
-        '''
-        if Transaction().context.get('billable'):
-            return Transaction().context.get('billable')
+        return 'billable'
 
     @classmethod
     @ModelView.button
